@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS SupplyChainDB.Bronze.Products (
     product_name VARCHAR,
     product_category VARCHAR,
     brand VARCHAR,
-    unit_cost FLOAT,
-    unit_weight FLOAT,
+    unit_cost DOUBLE,
+    unit_weight DOUBLE,
     is_active BOOLEAN
 );
 
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS SupplyChainDB.Bronze.Orders (
     product_id INT,
     warehouse_id INT,
     ordered_qty INT,
-    unit_price FLOAT,
+    unit_price DOUBLE,
     order_status VARCHAR,
     promised_delivery_date DATE,
     actual_ship_date DATE
@@ -567,7 +567,7 @@ CREATE TABLE IF NOT EXISTS SupplyChainDB.Bronze.Shipments (
     ship_mode VARCHAR,
     ship_date DATE,
     delivery_date DATE,
-    shipping_cost FLOAT,
+    shipping_cost DOUBLE,
     shipment_status VARCHAR
 );
 
@@ -644,7 +644,7 @@ SELECT
     s.ship_mode,
     s.shipping_cost,
     -- Calculate days taken to ship
-    DATEDIFF(day, o.order_date, o.actual_ship_date) AS days_to_ship,
+    TIMESTAMPDIFF(DAY, o.order_date, o.actual_ship_date) AS days_to_ship,
     -- Logic to determine if shipment was late
     CASE 
         WHEN o.actual_ship_date > o.promised_delivery_date THEN 1 
@@ -703,7 +703,7 @@ SELECT
     po.ordered_qty,
     po.received_qty,
     -- Lead time calculation
-    DATEDIFF(day, po.po_date, po.actual_delivery_date) AS actual_lead_time,
+    TIMESTAMPDIFF(DAY, po.po_date, po.actual_delivery_date) AS actual_lead_time,
     s.contract_lead_time_days,
     -- Late delivery flag
     CASE 
